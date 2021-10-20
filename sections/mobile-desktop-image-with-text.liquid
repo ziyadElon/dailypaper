@@ -1,0 +1,397 @@
+<!--
+We create two blocks 
+1. Desktop
+2. Mobile
+-->
+
+{%- for block in section.blocks-%}
+    
+    {%- if block.type == 'desktop_image_with_text' -%}
+         
+    <div id="{{block.type}}" class="{% if block.settings.use_alt_bg %}use-alt-bg fully-padded-row--medium{% else %}fully-spaced-row--medium{% endif %}">
+        <div class="container">
+          <div class="flexible-layout valign-middle">
+            <div class="column column--half {% if block.settings.image_position == 'right' %}column--order-push-desktop{% endif %}">
+              {% if block.settings.button_link != blank %}<a class="block-link" href="{{ block.settings.button_link }}">{% endif %}
+                <div class="image-overlap" style="max-width: {{ block.settings.image_width }}px">
+                  <div class="image-overlap__image image-overlap__image-1">
+                    {%- if block.settings.image == blank -%}
+                      <div class="placeholder-image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                    {%- else -%}
+                      {%- render 'responsive-image', image: block.settings.image, animate: true, animate_delay: "0.1s", animate_type: "cc-fade-in-up" -%}
+                    {%- endif -%}
+                  </div>
+      
+                  {%- if block.settings.image == blank or block.settings.image_2 != blank -%}
+                    <div class="image-overlap__image image-overlap__image-2">
+                      {%- if block.settings.image_2 == blank -%}
+                        <div class="placeholder-image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                      {%- else -%}
+                        {%- render 'responsive-image', image: block.settings.image_2, animate: true, animate_delay: "0.3s", animate_type: "cc-fade-in-up" -%}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {% if block.settings.button_link != blank %}</a>{% endif %}
+            </div>
+      
+            <div class="column column--half align-{{ block.settings.text_alignment }}" data-cc-animate>
+              <div class="feature-text-paired">
+                {%- if block.settings.subheading != blank -%}
+                  <div class="subheading subheading--over">{{ block.settings.subheading | escape }}</div>
+                {%- endif -%}
+      
+                {% if block.settings.title != blank %}
+                  {% if block.settings.use_h1 %}
+                    <h1 class="majortitle in-content">{{ block.settings.title | escape }}</h1>
+                  {% else %}
+                    <h2 class="majortitle in-content h1-style">{{ block.settings.title | escape }}</h2>
+                  {% endif %}
+                {% endif %}
+      
+                <div class="rte">{{ block.settings.text }}</div>
+      
+                {% if block.settings.button_label != blank %}
+                  <div class="lightly-spaced-row-above">
+                    <a class="{% if block.settings.button_style != 'link' %}btn btn--{{ block.settings.button_style }}{% else %}small-feature-link{% endif %}" href="{{ block.settings.button_link }}">{{ block.settings.button_label | escape }}</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+    <div id="{{block.type}}" class="{% if block.settings.use_alt_bg %}use-alt-bg fully-padded-row--medium{% else %}fully-spaced-row--medium{% endif %}">
+        <div class="container">
+          <div class="flexible-layout valign-middle">
+            <div class="column column--half {% if block.settings.image_position == 'right' %}column--order-push-desktop{% endif %}">
+              {% if block.settings.button_link != blank %}<a class="block-link" href="{{ block.settings.button_link }}">{% endif %}
+                <div class="image-overlap" style="max-width: {{ block.settings.image_width }}px">
+                  <div class="image-overlap__image image-overlap__image-1">
+                    {%- if block.settings.image == blank -%}
+                      <div class="placeholder-image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                    {%- else -%}
+                      {%- render 'responsive-image', image: block.settings.image, animate: true, animate_delay: "0.1s", animate_type: "cc-fade-in-up" -%}
+                    {%- endif -%}
+                  </div>
+      
+                  {%- if block.settings.image == blank or block.settings.image_2 != blank -%}
+                    <div class="image-overlap__image image-overlap__image-2">
+                      {%- if block.settings.image_2 == blank -%}
+                        <div class="placeholder-image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                      {%- else -%}
+                        {%- render 'responsive-image', image: block.settings.image_2, animate: true, animate_delay: "0.3s", animate_type: "cc-fade-in-up" -%}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {% if block.settings.button_link != blank %}</a>{% endif %}
+            </div>
+      
+            <div class="column column--half align-{{ block.settings.text_alignment }}" data-cc-animate>
+              <div class="feature-text-paired">
+                {%- if block.settings.subheading != blank -%}
+                  <div class="subheading subheading--over">{{ block.settings.subheading | escape }}</div>
+                {%- endif -%}
+      
+                {% if block.settings.title != blank %}
+                  {% if block.settings.use_h1 %}
+                    <h1 class="majortitle in-content">{{ block.settings.title | escape }}</h1>
+                  {% else %}
+                    <h2 class="majortitle in-content h1-style">{{ block.settings.title | escape }}</h2>
+                  {% endif %}
+                {% endif %}
+      
+                <div class="rte">{{ block.settings.text }}</div>
+      
+                {% if block.settings.button_label != blank %}
+                  <div class="lightly-spaced-row-above">
+                    <a class="{% if block.settings.button_style != 'link' %}btn btn--{{ block.settings.button_style }}{% else %}small-feature-link{% endif %}" href="{{ block.settings.button_link }}">{{ block.settings.button_label | escape }}</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    {%-endif-%}
+{%-endfor-%}
+
+  
+  
+  {% schema %}
+  {
+    "name": "MD Image with text",
+    "class": "block-slideshow",
+    "max_blocks": 8,
+    "settings": [],
+    "blocks": [
+      {
+        "type": "desktop_image_with_text",
+        "name": "Desktop Image with Text",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image 2"
+          },
+          {
+            "type": "range",
+            "id": "image_width",
+            "min": 150,
+            "max": 700,
+            "step": 10,
+            "unit": "px",
+            "label": "Image width",
+            "default": 700
+          },
+          {
+            "type": "text",
+            "id": "subheading",
+            "label": "Subheading"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Image with text"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_h1",
+            "label": "Set as primary page heading",
+            "info": "Uses <h1> tag (used for SEO and accessibility). One per page recommended.",
+            "default": false
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button",
+            "default": "Read more"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+          },
+          {
+            "type": "select",
+            "id": "button_style",
+            "label": "Button style",
+            "default": "primary",
+            "options": [
+              {
+                "label": "Button - primary",
+                "value": "primary"
+              },
+              {
+                "label": "Button - secondary",
+                "value": "secondary"
+              },
+              {
+                "label": "Link",
+                "value": "link"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "image_position",
+            "label": "Image alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "Text alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "use_alt_bg",
+            "label": "Use alternate block color",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "mobile_image_with_text",
+        "name": "Mobile Image with Text",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image 2"
+          },
+          {
+            "type": "range",
+            "id": "image_width",
+            "min": 150,
+            "max": 700,
+            "step": 10,
+            "unit": "px",
+            "label": "Image width",
+            "default": 700
+          },
+          {
+            "type": "text",
+            "id": "subheading",
+            "label": "Subheading"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Image with text"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_h1",
+            "label": "Set as primary page heading",
+            "info": "Uses <h1> tag (used for SEO and accessibility). One per page recommended.",
+            "default": false
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button",
+            "default": "Read more"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+          },
+          {
+            "type": "select",
+            "id": "button_style",
+            "label": "Button style",
+            "default": "primary",
+            "options": [
+              {
+                "label": "Button - primary",
+                "value": "primary"
+              },
+              {
+                "label": "Button - secondary",
+                "value": "secondary"
+              },
+              {
+                "label": "Link",
+                "value": "link"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "image_position",
+            "label": "Image alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "Text alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "use_alt_bg",
+            "label": "Use alternate block color",
+            "default": false
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Mobile Desktop Image with text",
+        "category": "Image"
+      }
+    ]
+  }
+  {% endschema %}
+  {%style%}
+    #desktop_image_with_text{
+       display:block;
+    }
+    #mobile_image_with_text{
+      display:none;
+    }
+    @media only screen and (max-width: 600px) {
+      #desktop_image_with_text{
+        display:none !important;
+     }
+     #mobile_image_with_text{
+       display:block !important;
+     }
+    }
+{%endstyle%}

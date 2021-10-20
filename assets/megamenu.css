@@ -1,0 +1,67 @@
+.mega-menu {
+    display:none;
+    left: 0;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+    background: #FFF;
+    margin-top: 66px; 
+    webkit-box-shadow: 0 8px 6px -6px black;
+     -moz-box-shadow: 0 8px 6px -6px black;
+          box-shadow: 0 8px 6px -6px black;   
+}
+.mega-menu h3 {
+  color: #444;
+  background: #CCC;
+  padding-top: 6px;
+}
+h3{
+  border-bottom:2px sold;
+}
+.mega-menu ul {
+    float: left;
+    margin-bottom: 20px;
+    margin-right: 40px;
+    width: 205px;
+}
+.mega-menu ul:last-child {margin-right: 0;}
+
+
+.menu-div {
+  float: left;
+  margin: 0 20px;
+}
+
+
+/* #Droppable Class Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.droppable {position: static;}
+.droppable > a:after {
+    content: "\f107";
+    font-family: FontAwesome;
+    font-size: 12px;
+    padding-left: 6px;
+    position: relative;
+    top: -1px;
+}
+.droppable:hover .mega-menu {display: block;}
+
+
+
+/* #Browser Clearfix
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+.cf:after {clear: both;}
+#menu-title {
+  background: #dbdbdb;
+  margin-bottom: 40px;
+}
+span#menu-t {
+border-bottom: 2px solid;
+/* margin-bottom: 53px; */
+/* margin-top: 18px; */
+}

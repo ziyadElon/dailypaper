@@ -1,0 +1,642 @@
+{{ 'megamenu.css' | asset_url | stylesheet_tag }}
+{%- assign mobile_expand_with_entire_link = true -%}
+
+{% style %}
+  .logo img {
+    width: {{ section.settings.logo_img_width_int }}px;
+  }
+  .logo-area__middle--logo-image {
+    max-width: {{ section.settings.logo_img_width_int }}px;
+  }
+  @media (max-width: 767px) {
+    .logo img {
+      width: {{ section.settings.logo_img_width_int | at_most: 125 }}px;
+    }
+  }
+  {%- if section.settings.enable_sticky -%}
+  .section-header {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+  {%- endif -%}
+    #user-icon-mob svg {
+          margin-bottom: 10px !important;
+      }
+    .logo-h1 {
+        width: 100%;
+        margin-top: 10px;
+        position: fixed;
+        margin-left: 20px;
+        font-size: 16px;
+    }
+    h1.logo.logo-mob {
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+    div#main-nav {
+        display: none;
+    }
+  {% endstyle %}
+
+{% if template == 'gift_card' %}
+
+{% comment %} Gift card template logo {% endcomment %}
+<meta itemprop="url" content="{{ shop.url }}">
+<meta itemprop="name" content="{{ shop.name }}">
+{% if section.settings.logo != blank %}
+  <h1 class="logo" itemscope itemtype="http://schema.org/Organization">
+    {% capture img_size %}{{ section.settings.logo_img_width_int | times: 2 }}x{% endcapture %}
+    <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" />
+  </h1>
+{% else %}
+  <h1>{{ shop.name }}</h1>
+{% endif %}
+
+{% else %}
+
+{%- assign featured_links = section.settings.nav_featured_link | split: ', ' -%}
+<div data-section-type="header" data-cc-animate>
+  <div id="pageheader" class="pageheader pageheader--layout-{{ section.settings.menu_layout }}">
+    {%- capture logo_html -%}
+      <div class="logo">
+        <a href="{{ routes.root_url }}" title="{{ shop.name }}">
+          {%- if section.settings.logo != blank -%}
+            {%- capture img_size -%}{{ section.settings.logo_img_width_int | times: 2 }}x{%- endcapture -%}
+            <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" />
+          {%- else -%}
+            <span class="logotext">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+      </div>
+    {%- endcapture -%}
+
+    <div class="logo-area container container--no-max">
+      <div class="logo-area__left">
+        <div class="logo-area__left__inner">
+          <!-- Hide moble button and add to right side-->
+          &nbsp;&nbsp;&nbsp;
+<!--           <button class="button notabutton mobile-nav-toggle" aria-label="{{ 'general.navigation.menu_toggle_aria_label' | t | escape }}" aria-controls="main-nav">
+            {% render 'svg-menu' %}
+          </button> -->
+          <a class="show-search-link" href="{{ routes.search_url }}">
+            <span class="show-search-link__icon">
+              {%- render 'svg-search' -%}
+            </span>
+            <span class="show-search-link__text">
+              {{- 'layout.search.open' | t -}}
+            </span>
+          </a>
+          
+          {% if section.settings.menu_layout contains 'inline' %}
+            <div class="navigation navigation--left" role="navigation" aria-label="{{ 'general.navigation.main_navigation_aria_label' | t | escape }}">
+              <div class="navigation__tier-1-container">
+                <ul class="navigation__tier-1">
+                  
+                  {% for link in linklists[section.settings.menu_linklist].links %}
+                    {%- assign has_dropdown = false -%}
+                    {%- if link.links != blank -%}
+                      {%- assign has_dropdown = true -%}
+                    {%- else -%}
+                      {%- for block in section.blocks -%}
+                        {%- if block.settings.dropdown_link_title == link.title -%}
+                          {%- assign has_dropdown = true -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                    <li id="megamenu" data="mmd{{forloop.index}}" class="navigation__item{% if has_dropdown %} navigation__item--with-children{% endif %}{% if featured_links contains link.title %} featured-link{% endif %}{% if link.active %} navigation__item--active{% endif %}">
+                      <a href="{{ link.url }}" class="navigation__link" {% if has_dropdown %}aria-haspopup="true" aria-expanded="false" aria-controls="NavigationTier2-{{ forloop.index }}"{% endif %}>
+                        {{- link.title -}}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <!--Mega menu code here-->
+        {% for link in linklists[section.settings.menu_linklist].links %}
+          
+            {%- if link.links != blank -%}
+              <div class='mega-menu' id="mmd{{forloop.index}}">
+                <div id='menu-title'>
+                  <a href="{{ link.url }}" class="navigation__link" {% if has_dropdown %}aria-haspopup="true" aria-expanded="false" aria-controls="NavigationTier2-{{ forloop.index }}"{% endif %}>
+                    <span id="menu-t">{{- link.title -}}</span>
+                  </a>
+                </div>
+               
+                {%- for child_link in link.links -%}
+                  
+                  <div class="menu-div">
+                      <div class="menu-center">
+                        {{ child_link.object.featured_image | img_url:'200' | img_tag}}
+                      <a href="{{ child_link.url }}" class="navigation__link"  {% if child_link.active %}aria-current="page"{% endif %}>
+                      {{ child_link.title }}
+                      </a>
+                    </div>
+                    
+                  </div>
+                {%- endfor -%}
+              
+              </div>
+            {%- endif -%}
+         
+        {% endfor %}
+        <!--end-->
+      </div>
+
+      <div class="logo-area__middle logo-area__middle--logo-{% if section.settings.logo != blank %}image{% else %}text{% endif %}">
+        <div class="logo-area__middle__inner">
+          {{- logo_html -}}
+        </div>
+      </div>
+
+      <div class="logo-area__right">
+        <div class="logo-area__right__inner">
+          {% if shop.customer_accounts_enabled %}
+            {% if customer %}
+              <a class="header-account-link" href="{{ routes.account_url }}" aria-label="{{ 'layout.customer.account' | t | escape }}">
+                <span class="desktop-only">{{ 'layout.customer.account' | t | escape }}</span>
+                <span class="mobile-only">{% render 'svg-user' %}</span>
+              </a>
+            {% else %}
+              <a class="header-account-link" href="{{ routes.account_login_url }}" aria-label="{{ 'layout.customer.account' | t | escape }}">
+                <span class="desktop-only">{{ 'layout.customer.account' | t | escape }}</span>
+                <span class="mobile-only">{% render 'svg-user' %}</span>
+              </a>
+            {% endif %}
+          {% endif %}
+          <a class="show-search-link" href="{{ routes.search_url }}">
+            <span class="show-search-link__text">
+              {{- 'layout.search.open' | t -}}
+            </span>
+            <span class="show-search-link__icon">
+              {%- render 'svg-search' -%}
+            </span>
+          </a>
+          <a href="{{ routes.cart_url }}" class="cart-link">
+            <span class="cart-link__label">{{ 'layout.header.cart' | t | escape }}</span>
+            <span class="cart-link__icon">
+              {%- render 'svg-cart' -%}
+              {%- if cart.item_count > 0 -%}
+                <span class="cart-link__count">{{ cart.item_count }}</span>
+              {%- endif -%}
+            </span>
+          </a>
+           <button class="button notabutton mobile-nav-toggle" aria-label="{{ 'general.navigation.menu_toggle_aria_label' | t | escape }}" aria-controls="main-nav">
+            {% render 'svg-menu' %} 
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {%- liquid
+      assign show_search_suggestions = false
+      if section.settings.search_suggestions_title != blank or section.settings.search_suggestions_menu != blank
+        assign show_search_suggestions = true
+      endif
+    -%}
+    <div id="main-search" class="main-search {% if show_search_suggestions %}main-search--with-suggestions{% endif %}"
+        data-live-search="{{ settings.enable_live_search }}"
+        data-live-search-price="{{ settings.live_search_show_price }}"
+        data-live-search-vendor="{{ settings.live_search_show_vendor }}"
+        data-live-search-meta="{{ settings.live_search_search_meta }}"
+        data-product-image-shape="{{ settings.prod_thumb_shape }}"
+        data-show-sold-out-label="{{ settings.prod_sold_out_show }}"
+        data-show-sale-label="{{ settings.prod_sale_show }}"
+        data-show-reduction="{{ settings.prod_reduction_show }}"
+        data-reduction-type="{{ settings.prod_reduction_type }}">
+
+      <div class="main-search__container container">
+        <button class="main-search__close button notabutton" aria-label="{{ 'layout.search.close' | t | escape }}">{% render 'svg-x' %}</button>
+
+        <form class="main-search__form" action="{{ routes.search_url }}" method="get" autocomplete="off">
+          <input type="hidden" name="type" value="{{ settings.search_type }}" />
+          <input type="hidden" name="options[prefix]" value="last" />
+          <div class="main-search__input-container">
+            <input class="main-search__input" type="text" name="q" autocomplete="off" placeholder="{{ 'layout.search.placeholder' | t | escape }}" aria-label="{{ 'layout.search.title' | t | escape }}" />
+          </div>
+          <button class="main-search__button button notabutton" type="submit" aria-label="{{ 'layout.header.search_submit' | t }}">{% render 'svg-search' %}</button>
+        </form>
+
+        <div class="main-search__results"></div>
+
+        {% if show_search_suggestions %}
+          <div class="main-search__suggestions">
+            {% if section.settings.search_suggestions_title != blank %}
+              <div class="h4-style heading-font">{{ section.settings.search_suggestions_title }}</div>
+            {% endif %}
+            {% if section.settings.search_suggestions_menu != blank %}
+              {%- assign suggestions_menu = linklists[section.settings.search_suggestions_menu] -%}
+              <div class="search-suggestions">
+                <div class="search-suggestions__item-row">
+                  {% for link in suggestions_menu.links %}
+                    {% if link.links != blank %}
+                      <div class="search-suggestions__item search-suggestions__item--with-row">
+                        <div class="search-suggestions__heading h5-style heading-font"><a href="{{ link.url }}">{{ link.title }}</a></div>
+                        <div class="search-suggestions__item-row">
+                          {% for child_link in link.links %}
+                            <div class="search-suggestions__item">
+                              {% if child_link.type == 'collection_link' %}
+                                {% render 'collection-block', collection: child_link.object %}
+                              {% elsif child_link.type == 'product_link' %}
+                                {% render 'product-block', product: child_link.object %}
+                              {% else %}
+                                <a class="search-suggestions__link" href="{{ child_link.url }}">{{ child_link.title }}</a>
+                              {% endif %}
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% else %}
+                      <div class="search-suggestions__item">
+                        {% if link.type == 'collection_link' %}
+                          {% render 'collection-block', collection: link.object %}
+                        {% elsif link.type == 'product_link' %}
+                          {% render 'product-block', product: link.object %}
+                        {% else %}
+                          <a class="search-suggestions__link" href="{{ link.url }}">{{ link.title }}</a>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div id="main-nav" class="desktop-only">
+    <div class="navigation navigation--main"
+        role="navigation"
+        aria-label="{{ 'general.navigation.main_navigation_aria_label' | t | escape }}"
+        data-mobile-expand-with-entire-link="{{ mobile_expand_with_entire_link }}">
+      <div class="navigation__tier-1-container">
+        <div class="mobile-only-flex navigation__mobile-header">
+          <a class="logoa" href="/">
+            {% if section.settings.logo != blank %}
+              <h1 class="logo logo-mob" itemscope itemtype="http://schema.org/Organization">
+                {% capture img_size %}{{ section.settings.logo_img_width_int | times: 2 }}x{% endcapture %}
+                <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" />
+              </h1>
+            {% else %}
+              <h1 class="logo-h1">{{ shop.name }}</h1>
+            {% endif %}
+<!--           <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" id="menu-logo"/> -->
+          </a>
+          <a href="#" class="mobile-nav-back">{% render 'svg-chevron-left', stroke_width: 1.3 %}</a>
+          <span class="mobile-nav-title"></span>
+          <a href="#" class="mobile-nav-toggle">{% render 'svg-x', stroke_width: 1.3 %}</a>
+        </div>
+        <ul class="navigation__tier-1">
+          <!--search form add on mobile menu by kishor-->
+          <li id="search">
+               <form class="main-search__form" action="{{ routes.search_url }}" method="get" autocomplete="off">
+                   <input type="hidden" name="type" value="{{ settings.search_type }}" />
+                   <input type="hidden" name="options[prefix]" value="last" />
+                   <div class="main-search__input-container">
+                      <input class="main-search__input" type="text" name="q" autocomplete="off" placeholder="{{ 'layout.search.placeholder' | t | escape }}" aria-label="{{ 'layout.search.title' | t | escape }}" />
+                   </div>
+                   <button class="main-search__button button notabutton" type="submit" aria-label="{{ 'layout.header.search_submit' | t }}">{% render 'svg-search' %}</button>
+                </form>
+           </li>
+           <!--end search form -->
+          <!-- Login/Register code below -->
+            <li class="navigation__item">
+              <a  href="{{ routes.account_url }}" aria-label="{{ 'layout.customer.account' | t | escape }}" class="navigation__link" >
+                <span class="mobile-only" id="user-icon">{% render 'svg-user' %}  <span id="login-reg">Login/Register</span></span>
+              </a>
+            </li>
+          <!--end-->
+          {% for link in linklists[section.settings.menu_linklist].links %}
+            {%- liquid
+              assign has_dropdown = false
+              if link.links != blank
+                assign has_dropdown = true
+              endif
+              assign use_columns = false
+              if link.levels >= 2
+                assign use_columns = true
+              else
+                for block in section.blocks
+                  if block.settings.dropdown_link_title == link.title
+                    assign use_columns = true
+                    assign has_dropdown = true
+                  endif
+                endfor
+              endif
+            -%}
+            <li class="navigation__item{% if has_dropdown %} navigation__item--with-children{% endif %}{% if featured_links contains link.title %} featured-link{% endif %}{% if link.active %} navigation__item--active{% endif %}">
+              <a href="{{ link.url }}" class="navigation__link" {% if has_dropdown %}aria-haspopup="true" aria-expanded="false" aria-controls="NavigationTier2-{{ forloop.index }}"{% endif %}>
+                {{- link.title -}}
+              </a>
+
+              {% if has_dropdown %}
+                <a class="navigation__children-toggle" href="#">{% render 'icon-toggle-menu', stroke_width: 1.3 %}</a>
+
+                {%- assign promo_count = 0 -%}
+                {%- capture menu_promotion_html -%}
+                  {%- for block in section.blocks -%}
+                    {%- if block.settings.dropdown_link_title == link.title -%}
+                      {%- assign promo_count = promo_count | plus: 1 -%}
+                      <div class="menu-promotion">
+                        {%- if block.settings.link_url != blank -%}
+                          <a class="menu-promotion__link" href="{{ block.settings.link_url }}">
+                        {%- endif -%}
+                        <div class="menu-promotion__image">
+                          {%- render 'responsive-image', image: block.settings.image -%}
+                        </div>
+                        {%- if block.settings.title != blank -%}
+                          <div class="menu-promotion__text">{{ block.settings.title }}</div>
+                        {%- endif -%}
+                        {%- if block.settings.link_url != blank -%}
+                          </a>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endcapture -%}
+                {%- assign column_count = promo_count | plus: link.links.size -%}
+
+                <div id="NavigationTier2-{{ forloop.index }}" class="navigation__tier-2-container navigation__child-tier">
+                  <ul class="navigation__tier-2{% if use_columns %} navigation__columns navigation__columns--count-{{ column_count }}{% if column_count > 5 %} navigation__columns--wraps{% endif %}{% endif %}">
+                    {% for child_link in link.links %}
+                    <li class="navigation__item{% if child_link.links != blank %} navigation__item--with-children{% endif %}{% if use_columns %} navigation__column{% endif %}{% if featured_links contains child_link.title %} featured-link{% endif %}">
+                      <a href="{{ child_link.url }}" class="navigation__link{% if child_link.links != blank %} navigation__column-title{% endif %}" {% if child_link.links != blank %}aria-haspopup="true" aria-expanded="false"{% endif %}>
+                        {{- child_link.title -}}
+                      </a>
+                      {% if child_link.links != blank %}
+                        <a class="navigation__children-toggle" href="#">{% render 'icon-toggle-menu', stroke_width: 1.3 %}</a>
+                      {% endif %}
+
+                      {% if child_link.links != blank %}
+                        <div class="navigation__tier-3-container navigation__child-tier">
+                          <ul class="navigation__tier-3">
+                            {% for child_child_link in child_link.links %}
+                            <li class="navigation__item{% if featured_links contains child_child_link.title %} featured-link{% endif %}">
+                              <a class="navigation__link" href="{{ child_child_link.url }}">{{ child_child_link.title }}</a>
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+
+                    {%- if promo_count > 0 -%}
+                      <li class="navigation__column navigation__column--promotion navigation__column--promotion-count-{{ promo_count }}">
+                        {{ menu_promotion_html }}
+                      </li>
+                    {%- endif -%}
+                  </ul>
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+        <!-- payment method and social icons-->
+        <div id="payment-method">
+          {%comment%}
+          {% for type in shop.enabled_payment_types %}
+            {{ type | payment_type_svg_tag: class: 'section-footer__payment-icon' }}
+          {% endfor%}
+          {%endcomment%}
+        </div>
+        <div class="section-footer__text-block__social" id="payment-method">
+          {%comment%}
+<!--           {% capture icon_size %}{% if block.settings.soc_icons_large %}x46{% else %}x30{% endif %}{% endcapture %}
+          {% capture container_class %}{% if block.settings.soc_icons_large %}social-links--large{% else %}{% endif %}{% endcapture %}
+          {% render 'social-icons', icon_setting: settings.social_custom_icon, icon_size: icon_size, container_class: container_class %}
+         -->
+          {%endcomment%}
+          <h1 class="service-title-mobile social">
+            <a href="https://www.instagram.com/dailypaper/" target="_self" onclick="window.open(this.href,'_blank');return false;">
+              <svg enable-background="new 0 0 512 512" width="16" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m352 0h-192c-88.352 0-160 71.648-160 160v192c0 88.352 71.648 160 160 160h192c88.352 0 160-71.648 160-160v-192c0-88.352-71.648-160-160-160zm112 352c0 61.76-50.24 112-112 112h-192c-61.76 0-112-50.24-112-112v-192c0-61.76 50.24-112 112-112h192c61.76 0 112 50.24 112 112z"></path><path d="m256 128c-70.688 0-128 57.312-128 128s57.312 128 128 128 128-57.312 128-128-57.312-128-128-128zm0 208c-44.096 0-80-35.904-80-80 0-44.128 35.904-80 80-80s80 35.872 80 80c0 44.096-35.904 80-80 80z"></path><circle cx="393.6" cy="118.4" r="17.056"></circle></svg></a>
+            <a href="https://www.facebook.com/Dailypaper/" target="_self" onclick="window.open(this.href,'_blank');return false;"> 
+              <svg enable-background="new 0 0 24 24" width="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15.997 3.985h2.191v-3.816c-.378-.052-1.678-.169-3.192-.169-3.159 0-5.323 1.987-5.323 5.639v3.361h-3.486v4.266h3.486v10.734h4.274v-10.733h3.345l.531-4.266h-3.877v-2.939c.001-1.233.333-2.077 2.051-2.077z"></path></svg></a>
+            <a href="https://www.youtube.com/channel/UCa4TSxPJEZB9NGxhnm1uWjQ" target="_self" onclick="window.open(this.href,'_blank');return false;">
+              <svg viewBox="0 -62 512.00199 512" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m334.808594 170.992188-113.113282-61.890626c-6.503906-3.558593-14.191406-3.425781-20.566406.351563-6.378906 3.78125-10.183594 10.460937-10.183594 17.875v122.71875c0 7.378906 3.78125 14.046875 10.117188 17.832031 3.308594 1.976563 6.976562 2.96875 10.652344 2.96875 3.367187 0 6.742187-.832031 9.847656-2.503906l113.117188-60.824219c6.714843-3.613281 10.90625-10.59375 10.9375-18.222656.027343-7.628906-4.113282-14.640625-10.808594-18.304687zm-113.859375 63.617187v-91.71875l84.539062 46.257813zm0 0"></path><path d="m508.234375 91.527344-.023437-.234375c-.433594-4.121094-4.75-40.777344-22.570313-59.421875-20.597656-21.929688-43.949219-24.59375-55.179687-25.871094-.929688-.105469-1.78125-.203125-2.542969-.304688l-.894531-.09375c-67.6875-4.921874-169.910157-5.5937495-170.933594-5.59765575l-.089844-.00390625-.089844.00390625c-1.023437.00390625-103.246094.67578175-171.542968 5.59765575l-.902344.09375c-.726563.097657-1.527344.1875-2.398438.289063-11.101562 1.28125-34.203125 3.949219-54.859375 26.671875-16.972656 18.445312-21.878906 54.316406-22.382812 58.347656l-.058594.523438c-.152344 1.714844-3.765625 42.539062-3.765625 83.523437v38.3125c0 40.984375 3.613281 81.808594 3.765625 83.527344l.027344.257813c.433593 4.054687 4.746093 40.039062 22.484375 58.691406 19.367187 21.195312 43.855468 24 57.027344 25.507812 2.082031.238282 3.875.441406 5.097656.65625l1.183594.164063c39.082031 3.71875 161.617187 5.550781 166.8125 5.625l.15625.003906.15625-.003906c1.023437-.003907 103.242187-.675781 170.929687-5.597657l.894531-.09375c.855469-.113281 1.816406-.214843 2.871094-.324218 11.039062-1.171875 34.015625-3.605469 54.386719-26.019532 16.972656-18.449218 21.882812-54.320312 22.382812-58.347656l.058594-.523437c.152344-1.71875 3.769531-42.539063 3.769531-83.523438v-38.3125c-.003906-40.984375-3.617187-81.804687-3.769531-83.523437zm-26.238281 121.835937c0 37.933594-3.3125 77-3.625 80.585938-1.273438 9.878906-6.449219 32.574219-14.71875 41.5625-12.75 14.027343-25.847656 15.417969-35.410156 16.429687-1.15625.121094-2.226563.238282-3.195313.359375-65.46875 4.734375-163.832031 5.460938-168.363281 5.488281-5.082032-.074218-125.824219-1.921874-163.714844-5.441406-1.941406-.316406-4.039062-.558594-6.25-.808594-11.214844-1.285156-26.566406-3.042968-38.371094-16.027343l-.277344-.296875c-8.125-8.464844-13.152343-29.6875-14.429687-41.148438-.238281-2.710937-3.636719-42.238281-3.636719-80.703125v-38.3125c0-37.890625 3.304688-76.914062 3.625-80.574219 1.519532-11.636718 6.792969-32.957031 14.71875-41.574218 13.140625-14.453125 26.996094-16.054688 36.160156-17.113282.875-.101562 1.691407-.195312 2.445313-.292968 66.421875-4.757813 165.492187-5.464844 169.046875-5.492188 3.554688.023438 102.589844.734375 168.421875 5.492188.808594.101562 1.691406.203125 2.640625.3125 9.425781 1.074218 23.671875 2.699218 36.746094 16.644531l.121094.128906c8.125 8.464844 13.152343 30.058594 14.429687 41.75.226563 2.558594 3.636719 42.171875 3.636719 80.71875zm0 0"></path></svg>
+            </a>
+            <a href="https://www.twitter.com/dailypaper" target="_self" onclick="window.open(this.href,'_blank');return false;">
+              <svg width="16" enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m512 97.248c-19.04 8.352-39.328 13.888-60.48 16.576 21.76-12.992 38.368-33.408 46.176-58.016-20.288 12.096-42.688 20.64-66.56 25.408-19.264-20.512-46.72-33.216-76.672-33.216-58.112 0-104.896 47.168-104.896 104.992 0 8.32.704 16.32 2.432 23.936-87.264-4.256-164.48-46.08-216.352-109.792-9.056 15.712-14.368 33.696-14.368 53.056 0 36.352 18.72 68.576 46.624 87.232-16.864-.32-33.408-5.216-47.424-12.928v1.152c0 51.008 36.384 93.376 84.096 103.136-8.544 2.336-17.856 3.456-27.52 3.456-6.72 0-13.504-.384-19.872-1.792 13.6 41.568 52.192 72.128 98.08 73.12-35.712 27.936-81.056 44.768-130.144 44.768-8.608 0-16.864-.384-25.12-1.44 46.496 29.984 101.6 47.104 161.024 47.104 193.152 0 298.752-160 298.752-298.688 0-4.64-.16-9.12-.384-13.568 20.832-14.784 38.336-33.248 52.608-54.496z"></path></svg></a>
+          </h1>
+       
+        </div>
+        <!--end-->
+        {% if section.settings.nav_mob_products_collection != blank %}
+          <div class="mobile-only navigation__mobile-products">
+            <div class="navigation__mobile-products-title">{{ section.settings.nav_mob_products_title | escape }}</div>
+            <div class="product-list product-list--scrollarea">
+              {% for product in collections[section.settings.nav_mob_products_collection].products limit: 10 %}
+                {% render 'product-block', product: product, no_swiping: true, no_quick_buy_markup: true %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <a href="#" class="header-shade mobile-nav-toggle" aria-label="{{ 'general.navigation_menu.toggle_aria_label' }}"></a>
+</div>
+
+{%- if section.settings.menu_layout contains 'inline' -%}
+<script id="InlineNavigationCheckScript">
+  theme.inlineNavigationCheck = function() {
+    var pageHeader = document.querySelector('.pageheader'),
+        inlineNavContainer = pageHeader.querySelector('.logo-area__left__inner'),
+        inlineNav = inlineNavContainer.querySelector('.navigation--left');
+    if (inlineNav && getComputedStyle(inlineNav).display != 'none') {
+      var inlineMenuCentered = document.querySelector('.pageheader--layout-inline-menu-center'),
+          logoContainer = document.querySelector('.logo-area__middle__inner');
+      if(inlineMenuCentered) {
+        var rightWidth = document.querySelector('.logo-area__right__inner').clientWidth,
+            middleWidth = logoContainer.clientWidth,
+            logoArea = document.querySelector('.logo-area'),
+            computedLogoAreaStyle = getComputedStyle(logoArea),
+            logoAreaInnerWidth = logoArea.clientWidth - Math.ceil(parseFloat(computedLogoAreaStyle.paddingLeft)) - Math.ceil(parseFloat(computedLogoAreaStyle.paddingRight)),
+            availableNavWidth = logoAreaInnerWidth - Math.max(rightWidth, middleWidth) * 2 - 40;
+        inlineNavContainer.style.maxWidth = availableNavWidth + 'px';
+      }
+
+      var lastInlineNavLink = inlineNav.querySelector('.navigation__item:last-child');
+      if (lastInlineNavLink) {
+        var inlineNavWidth = lastInlineNavLink.offsetLeft + lastInlineNavLink.offsetWidth;
+        if (inlineNavContainer.offsetWidth >= inlineNavWidth) {
+          pageHeader.classList.add('pageheader--layout-inline-permitted');
+          var tallLogo = logoContainer.clientHeight > lastInlineNavLink.clientHeight + 1;
+          if (tallLogo) {
+            inlineNav.classList.add('navigation--tight-underline');
+          } else {
+            inlineNav.classList.remove('navigation--tight-underline');
+          }
+        } else {
+          pageHeader.classList.remove('pageheader--layout-inline-permitted');
+        }
+      }
+    }
+  }
+  theme.inlineNavigationCheck();
+</script>
+{%- endif -%}
+
+{% endif %}
+
+
+{% schema %}
+  {
+    "name": "Header",
+    "class": "section-header",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "info": "520 x 200px (recommended)"
+      },
+      {
+        "type": "range",
+        "id": "logo_img_width_int",
+        "min": 30,
+        "max": 500,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 180
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky",
+        "label": "Enable sticky header",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "link_list",
+        "id": "menu_linklist",
+        "label": "Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "select",
+        "id": "menu_layout",
+        "label": "Menu alignment",
+        "info": "Alignment will switch to 'Underneath' if the links do not fit beside the logo",
+        "options": [
+          {
+            "value": "inline-menu-left",
+            "label": "Left"
+          },
+          {
+            "value": "inline-menu-center",
+            "label": "Center"
+          },
+          {
+            "value": "underneath",
+            "label": "Underneath"
+          }
+        ],
+        "default": "underneath"
+      },
+      {
+        "type": "text",
+        "id": "nav_featured_link",
+        "label": "Featured link",
+        "info": "Enter the title of a link to highlight it in a different color",
+        "default": "Sale"
+      },
+      {
+        "type": "header",
+        "content": "Mobile featured products",
+        "info": "Shown in the mobile menu"
+      },
+      {
+        "type": "text",
+        "id": "nav_mob_products_title",
+        "label": "Title",
+        "default": "Best Sellers"
+      },
+      {
+        "type": "collection",
+        "id": "nav_mob_products_collection",
+        "label": "Collection"
+      },
+      {
+        "type": "header",
+        "content": "Search",
+        "info": "These show before search terms are entered"
+      },
+      {
+        "type": "text",
+        "id": "search_suggestions_title",
+        "label": "Suggestions title"
+      },
+      {
+        "type": "link_list",
+        "id": "search_suggestions_menu",
+        "label": "Suggestions menu",
+        "info": "Dropdown menus will show as separate rows. Links to collections and products will show images."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "menu-promotion",
+        "name": "Menu promotion",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "Menu promotions are shown in dropdown menus. [Read more](https://cleancanvas.co.uk/support/symmetry/header)"
+          },
+          {
+            "type": "text",
+            "id": "dropdown_link_title",
+            "label": "Link name",
+            "info": "The name of any top-level link"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "url",
+            "id": "link_url",
+            "label": "Link URL"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+<!--Megamenu scrip-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  
+  $("document").ready(function(){
+    
+    $("#navmega, li").hover(function(){
+      
+      $("#"+$(this).attr('data')).show().fadeIn();  
+      var d="#"+$(this).attr('data');  
+      $(d).hover(function(){
+        $(d).show().fadeIn(); 
+      },function () {
+        $(d).hide().fadeOut();
+    });
+    },function () {
+     $("#"+$(this).attr('data')).hide().fadeOut();
+  });
+  });
+</script>
+<!--end script-->

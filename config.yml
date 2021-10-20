@@ -1,0 +1,19 @@
+staging:
+  password: ${DAILYPAPER_SANDBOX_PASSWORD}
+  theme_id: 127446646962
+  store: sandbox-dailypaperclothing.myshopify.com
+  timeout: 90s
+  ignore_files:
+    - "*.md"
+    - "settings_data.json"
+    - "templates/*.json"
+
+production: 
+  password: ${DAILYPAPER_SANDBOX_PASSWORD}
+  theme_id: 127439831218
+  store: sandbox-dailypaperclothing.myshopify.com
+  timeout: 180s
+  ignore_files:
+    - "*.md"
+    - "settings_data.json"
+    - "templates/*.json"
